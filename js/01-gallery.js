@@ -5,6 +5,10 @@ const galleryParentEl = document.querySelector('.gallery');
 
 const galleryEls = galleryItems.map(makeGalleryItem).join('');
 
+galleryParentEl.insertAdjacentHTML('beforeend', galleryEls);
+
+galleryParentEl.addEventListener('click', onPreviewImgClick);
+
 function makeGalleryItem({ preview, original, description }) {
     const itemEl = `<div class="gallery__item">
                         <a class="gallery__link" href=${original}>
@@ -28,16 +32,24 @@ function onPreviewImgClick(event) {
 }
 
 function openOriginalImgModally(event) {
+    const original = event.target.dataset.source;
+    const description = event.target.alt;
+
     event.preventDefault();
-
-    const instance = basicLightbox.create(`
-        <div class="modal">
-            <img src='${event.target.dataset.source}'/>
-        </div>
-    `);
+    
+    const instance = basicLightbox.create(
+        `<div class="modal">
+            <img
+                src='${original}'
+                alt='${description}'
+            />
+        </div>`
+    )
     instance.show();
+
+    window.addEventListener('keydown', onEscKeyDown);
+
+    // console.dir(instance);
+
+    onEscKeyDown() { }
 }
-
-galleryParentEl.insertAdjacentHTML('beforeend', galleryEls);
-
-galleryParentEl.addEventListener('click', onPreviewImgClick);
