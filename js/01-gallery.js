@@ -48,13 +48,10 @@ class Gallery {
                     src='${original}'
                     alt='${description}'
                 />
-            </div>`,
-            {
-                onClose: () => window.removeEventListener('keydown', this.onEscKeyDown.bind(this))
-            },
+            </div>`
         );
 
-        this.modal.show(window.addEventListener('keydown', this.onEscKeyDown.bind(this)));
+        this.modal.show(window.addEventListener('keydown', this.onEscKeyDown.bind(this)), {once: true});
     }
 
     onEscKeyDown(event) {

@@ -24,6 +24,7 @@ function makeGalleryItem({ preview, original, description }) {
 function onPreviewImgClick(event) {
     if (event.target.nodeName !== 'IMG') {
         return;
-    }
-    event.modal.open();
+    }; 
+
+    modal.open(event);
 }
