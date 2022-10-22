@@ -11,7 +11,6 @@ class Gallery {
     init() { 
         const galleryEls = this.galleryItems.map(this.makeGalleryItem).join('');
         this.galleryParentEl.insertAdjacentHTML('beforeend', galleryEls);
-        this.galleryParentEl.addEventListener('click', this.onPreviewImgClick.bind(this));
     }
 
     makeGalleryItem({ preview, original, description }) {
@@ -27,43 +26,46 @@ class Gallery {
                 </div>`;
         return itemEl;
     }
+}
 
-    onPreviewImgClick(event) { 
-        if (event.target.nodeName !== 'IMG') {
-            return;
-        }
+new Gallery(galleryItems, galleryParentEl).init();
+
+galleryParentEl.addEventListener('click', onPreviewImgClick);
+
+function onPreviewImgClick(event) { 
+    if (event.target.nodeName !== 'IMG') {
+        return;
+    }
+
+    openOriginalImgModally(event);
+}
+
+function openOriginalImgModally(event) {
+    const original = event.target.dataset.source;
+    const description = event.target.alt;
+
+    event.preventDefault();
     
-        this.openOriginalImgModally(event);
-    }
+    const modal = basicLightbox.create(
+        `<div class="modal">
+            <img
+                src='${original}'
+                alt='${description}'
+            />
+        </div>`,
+        {
+            onClose: () => {
+                window.removeEventListener('keydown', onEscKeyDown);
+            },
+        }
+    );
 
-    openOriginalImgModally(event) {
-        const original = event.target.dataset.source;
-        const description = event.target.alt;
+    modal.show(window.addEventListener('keydown', onEscKeyDown));
 
-        event.preventDefault();
-        
-        this.modal = basicLightbox.create(
-            `<div class="modal">
-                <img
-                    src='${original}'
-                    alt='${description}'
-                />
-            </div>`,
-            {
-                onClose: () => {
-                    window.removeEventListener('keydown', this.onEscKeyDown.bind(this));
-                },
-            }
-        );
-
-        this.modal.show(window.addEventListener('keydown', this.onEscKeyDown.bind(this)));
-    }
-
-    onEscKeyDown(event) {
+    function onEscKeyDown(event) {
         if (event.code === 'Escape') {
-            this.modal.close();
+            modal.close();
         }
     }
 }
 
-new Gallery(galleryItems, galleryParentEl).init();
